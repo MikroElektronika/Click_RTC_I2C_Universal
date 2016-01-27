@@ -3,29 +3,25 @@
      - Set Button Press Level for PortD on Vcc */
 #include "rtc.h"
 
-
-
 // TFT module connections
-/*unsigned int TFT_DataPort at GPIOE_ODR;
+unsigned int TFT_DataPort at GPIOE_ODR;
 sbit TFT_RST at GPIOE_ODR.B8;
 sbit TFT_RS at GPIOE_ODR.B12;
 sbit TFT_CS at GPIOE_ODR.B15;
 sbit TFT_RD at GPIOE_ODR.B10;
 sbit TFT_WR at GPIOE_ODR.B11;
-sbit TFT_BLED at GPIOE_ODR.B9;*/
+sbit TFT_BLED at GPIOE_ODR.B9;
 // End TFT module connections
 
-
-//sbit RTC_CS_PIN at GPIOB_ODR.B0;
 rtc_time_t time_test;
 rtc_time_t *time;
 rtc_time_t *local_time;
 char txt[10];
 
-static void DisplayInit()
+static void display_init()
 {
 
-    /*TFT_Init_ILI9341_8bit(320, 240);
+    TFT_Init_ILI9341_8bit(320, 240);
     TFT_BLED = 1;
     TFT_FILL_SCREEN(CL_AQUA);
     TFT_SET_FONT(TFT_defaultFont,CL_BLACK, FO_HORIZONTAL);
@@ -39,11 +35,11 @@ static void DisplayInit()
     Tft_write_text("year", 10,140);
     tft_write_text("Current time zone : GMT - 2", 10,200);
     tft_set_pen(CL_AQUA,1);
-    TFT_SET_BRUSH(1,CL_AQUA, 0, 0, 0,0);*/
+    TFT_SET_BRUSH(1,CL_AQUA, 0, 0, 0,0);
 
 }
 
-display_values()
+void display_values()
 {
   TFT_RECTANGLE(100,40, 240,180);
   inttostr(time->seconds, txt);
@@ -75,33 +71,34 @@ display_values()
 }
 
 
-void main() {
+void main() 
+{
 
-   //DisplayInit();
+    display_init();
 
-  //GPIO_Digital_Input(&GPIOD_BASE, _GPIO_PINMASK_10);
-
-
-  time_test.seconds = 0;
-  time_test.minutes = 15;
-  time_test.hours = 15;
-  time_test.weekday = 0;
-  time_test.monthday = 1;
-  time_test.month = 1;
-  time_test.year = 15;
+    GPIO_Digital_Input(&GPIOD_BASE, _GPIO_PINMASK_10);
 
 
-  //I2C1_Init_Advanced( 100000, &_GPIO_MODULE_I2C1_PB67 );
-  rtc_init( RTC6_MCP7941X, -1 );
-  delay_ms(1000);
-  rtc_set_gmt_time(time_test);
+    time_test.seconds = 0;
+    time_test.minutes = 15;
+    time_test.hours = 15;
+    time_test.weekday = 0;
+    time_test.monthday = 1;
+    time_test.month = 1;
+    time_test.year = 15;
 
 
-  while(1)                             // Infinite loop
-  {       Delay_ms( 200 );
-          time = rtc_get_gmt_time();
-          local_time = rtc_get_local_time();
-//          display_values();
-  }
+    //I2C1_Init_Advanced( 100000, &_GPIO_MODULE_I2C1_PB67 );
+    rtc_init( RTC6_MCP7941X, -1 );
+    Delay_ms(1000);
+    rtc_set_gmt_time(time_test);
 
+
+    while(1)                             // Infinite loop
+    {       
+      Delay_ms( 200 );
+      time = rtc_get_gmt_time();
+      local_time = rtc_get_local_time();
+      display_values();
+    }
 }
